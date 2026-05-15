@@ -8,8 +8,8 @@ function App() {
 
   const [newItem, setNewItem] = useState({
     name: '',
-    qty: 0,
-    rate: 0,
+    qty: '',
+    rate: '',
     gst: 5
   })
 
@@ -17,7 +17,7 @@ function App() {
   const today = new Date().toISOString().split('T')[0]
 
   const [invoiceInfo, setInvoiceInfo] = useState({
-    invoiceNo: '1605',
+    invoiceNo: '16',
     date: today,
     reverseCharge: 'N',
     state: 'DELHI',
@@ -39,20 +39,20 @@ function App() {
 
   const handleSubmitItem = (e) => {
     e.preventDefault()
-    if (!newItem.name || newItem.qty <= 0 || newItem.rate <= 0) return
+    if (!newItem.name || !newItem.qty || !newItem.rate || Number(newItem.qty) <= 0 || Number(newItem.rate) <= 0) return
 
     if (editingId) {
       // Update existing item
       setItems(items.map(item =>
-        item.id === editingId ? { ...newItem, id: editingId } : item
+        item.id === editingId ? { ...newItem, qty: Number(newItem.qty), rate: Number(newItem.rate), id: editingId } : item
       ))
       setEditingId(null)
     } else {
       // Add new item
-      setItems([...items, { ...newItem, id: Date.now() }])
+      setItems([...items, { ...newItem, qty: Number(newItem.qty), rate: Number(newItem.rate), id: Date.now() }])
     }
 
-    setNewItem({ name: '', qty: 0, rate: 0, gst: 5 })
+    setNewItem({ name: '', qty: '', rate: '', gst: 5 })
   }
 
   const startEdit = (item) => {
@@ -71,7 +71,7 @@ function App() {
     setItems(items.filter(item => item.id !== id))
     if (editingId === id) {
       setEditingId(null)
-      setNewItem({ name: '', qty: 0, rate: 0, gst: 5 })
+      setNewItem({ name: '', qty: '', rate: '', gst: 5 })
     }
   }
 
@@ -261,7 +261,8 @@ function App() {
               <input
                 type="number"
                 value={newItem.qty}
-                onChange={e => setNewItem({ ...newItem, qty: Number(e.target.value) })}
+                onChange={e => setNewItem({ ...newItem, qty: e.target.value })}
+                placeholder="0"
               />
             </div>
             <div className="input-group">
@@ -269,7 +270,8 @@ function App() {
               <input
                 type="number"
                 value={newItem.rate}
-                onChange={e => setNewItem({ ...newItem, rate: Number(e.target.value) })}
+                onChange={e => setNewItem({ ...newItem, rate: e.target.value })}
+                placeholder="0"
               />
             </div>
             <div style={{ gridColumn: 'span 2', display: 'flex', gap: '10px' }}>
@@ -281,7 +283,7 @@ function App() {
                   type="button"
                   onClick={() => {
                     setEditingId(null)
-                    setNewItem({ name: '', qty: 0, rate: 0, gst: 5 })
+                    setNewItem({ name: '', qty: '', rate: '', gst: 5 })
                   }}
                   className="btn-add"
                   style={{ flex: 1, marginTop: '0.5rem', background: '#64748b' }}
